@@ -27,15 +27,23 @@ function addToDatabase(play) {
 
 // replaces all single quotes with sql escaped single quotes
 function formatString(str) {
-   return str.replace( /'/g , '\'\'' );
+   var formatStr = str.replace( /'/g , '\'\'' );
+   if (formatStr.length >= 32) {
+       formatStr = formatStr.substr(0,32);
+   }
+
+   return formatStr;
 }
 
 function main() {
     var recentPlays = ReadRecents('./json/sample.json');
-    for(i = 0; i < 20; i++) {
+    for(i = 0; i < recentPlays.length; i++) {
         recentPlays[i].trackName = formatString(recentPlays[i].trackName);
+        recentPlays[i].artistName = formatString(recentPlays[i].artistName);
         addToDatabase(recentPlays[i]);
     }
+
+    //console.log(con.query('select trackName, sum(msPlayed) as timeListened from plays where trackName like "Althea%" group by trackname order by timeListened desc;'))
     con.end();
 }
 
