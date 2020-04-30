@@ -1,0 +1,9 @@
+CREATE DATABASE test;
+
+CREATE TABLE people
+(
+name varchar (32),
+age INT NOT NULL,
+ID INT AUTO_INCREMENT,
+PRIMARY KEY(ID)
+);
