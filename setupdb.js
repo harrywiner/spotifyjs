@@ -17,13 +17,28 @@ var con = mysql.createConnection({
 
 con.connect(function(err) {
     if (err) throw err;
-    /*con.query("DROP TABLE plays; CREATE TABLE plays(playID INT AUTO_INCREMENT,trackName varchar (32),artistName varchar (32),endTime varchar (32),msPlayed INT,PRIMARY KEY (playID));", function (err, result, fields) {
-        if (err) throw err;
-    });*/
 });
 
+var setup = "DROP TABLE plays;";
+var setup2 = "CREATE TABLE plays (playID INT AUTO_INCREMENT,trackName varchar (32),artistName varchar (32),endTime varchar (32),msPlayed INT,PRIMARY KEY (playID))";
+
+con.query(setup , 
+    function (err, result, fields) {
+        if (err) throw err;
+    });
+
+con.query(setup2, 
+    function (err, result, fields) {
+        if (err) throw err;
+    });
+
 function addToDatabase(play) {
-    con.query("INSERT INTO plays (trackName, artistName, endTime, msPlayed) VALUES ( '" + play.trackName + "', '" + play.artistName + "', '" + play.endTime + "', " + play.msPlayed + ")", function (err, result, fields) {
+    var sql = "INSERT INTO plays (trackName, artistName, endTime, msPlayed) VALUES (?, ?, ?, ?);"
+    var inputs = [play.trackName, play.artistName, play.endTime, play.msPlayed];
+
+    sql = con.format(sql, inputs);
+
+    con.query(sql, function (err, result, fields) {
         if (err) throw err;
     });
 }
@@ -40,7 +55,7 @@ function formatString(str) {
 
 function insertRecents(filename) {
     var recentPlays = ReadRecents(filename);
-    for(i = 0; i < recentPlays.length; i++) {
+    for(i = 0; i < 10; i++) {
         recentPlays[i].trackName = formatString(recentPlays[i].trackName);
         recentPlays[i].artistName = formatString(recentPlays[i].artistName);
         addToDatabase(recentPlays[i]);
@@ -48,11 +63,11 @@ function insertRecents(filename) {
 }
 
 function main() {
+    // todo make i value in  for loop determine amount 
     insertRecents('./json/StreamingHistory0.json');
     insertRecents('./json/StreamingHistory1.json');
     insertRecents('./json/StreamingHistory2.json');
 
-    //console.log(con.query('select trackName, sum(msPlayed) as timeListened from plays where trackName like "Althea%" group by trackname order by timeListened desc;'))
     con.end();
 }
 

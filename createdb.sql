@@ -1,5 +1,7 @@
 CREATE DATABASE spotify;
 
+USE spotify;
+
 CREATE TABLE track
 (
 trackID INT NOT NULL AUTO_INCREMENT,
