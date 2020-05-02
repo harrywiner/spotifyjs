@@ -55,7 +55,7 @@ function formatString(str) {
 
 function insertRecents(filename) {
     var recentPlays = ReadRecents(filename);
-    for(i = 0; i < 10; i++) {
+    for(i = 0; i < recentPlays.length; i++) {
         recentPlays[i].trackName = formatString(recentPlays[i].trackName);
         recentPlays[i].artistName = formatString(recentPlays[i].artistName);
         addToDatabase(recentPlays[i]);
